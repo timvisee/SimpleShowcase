@@ -2,7 +2,10 @@ package com.timvisee.SimpleShowcase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -65,6 +68,13 @@ public class SimpleShowcase extends JavaPlugin {
 		// Reset the enabled date, to calculate the 'running time'
 		enabledDate = new Date();
 		
+		// Autogenerate the default files
+		try {
+			checkConigFilesExist();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// define the default config path
 		this.configFile = new File(getDataFolder(), "config.yml");
 		
@@ -98,13 +108,13 @@ public class SimpleShowcase extends JavaPlugin {
 		
 		// Create a timer for respawning the items every time in shops (if needed)
 		if(getConfig().getBoolean("shops.showItems.respawn.enabled", true)) {
-			getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllShopShowItems(); } }, getConfig().getInt("shops.showItems.respawn.interval", 12000), getConfig().getInt("shops.showItems.respawn.interval", 12000));
+			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllShopShowItems(); } }, getConfig().getInt("shops.showItems.respawn.interval", 12000), getConfig().getInt("shops.showItems.respawn.interval", 12000));
 		}
 		if(getConfig().getBoolean("shops.showItems.respawnIncorrect.enabled", true)) {
-			getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllIncorrectShopShowItems(); } }, getConfig().getInt("shops.showItems.respawnIncorrect.interval", 100), getConfig().getInt("shops.showItems.respawnIncorrect.interval", 300));
+			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllIncorrectShopShowItems(); } }, getConfig().getInt("shops.showItems.respawnIncorrect.interval", 100), getConfig().getInt("shops.showItems.respawnIncorrect.interval", 300));
 		}
 		if(getConfig().getBoolean("autoSave.enabled", true)) {
-			getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() { public void run() { saveAll(); } }, getConfig().getInt("autoSave.interval", 6000), getConfig().getInt("autoSave.interval", 6000));
+			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { saveAll(); } }, getConfig().getInt("autoSave.interval", 6000), getConfig().getInt("autoSave.interval", 6000));
 		}
 		
 		// Setup Metrics
@@ -128,6 +138,46 @@ public class SimpleShowcase extends JavaPlugin {
 		
 		// Show disabled message
 		log.info("[SimpleShowcase] Simple Showcase Disabled");
+	}
+
+	
+	public void checkConigFilesExist() throws Exception {
+		if(!getDataFolder().exists()) {
+			log.info("[SimpleShowcase] Creating new SimpleShowcase folder");
+			getDataFolder().mkdirs();
+		}
+		File configFile = new File(getDataFolder(), "config.yml");
+		if(!configFile.exists()) {
+			log.info("[SimpleShowcase] Generating default config file");
+			copy(getResource("res/DefaultFiles/config.yml"), configFile);
+		}
+		File dataFolder = new File(getDataFolder(), "data");
+		if(!dataFolder.exists()) {
+			log.info("[SimpleShowcase] Generating default data folder");
+			dataFolder.mkdirs();
+		}
+		File pricelistFolder = new File(getDataFolder(), "pricelist");
+		if(!pricelistFolder.exists()) {
+			log.info("[SimpleShowcase] Generating new 'pricelist' folder");
+			pricelistFolder.mkdirs();
+			copy(getResource("res/DefaultFiles/pricelist/pricelist_main.yml"), new File(pricelistFolder, "pricelist_main.yml"));
+			copy(getResource("res/DefaultFiles/pricelist/pricelist_example.yml"), new File(pricelistFolder, "pricelist_example.yml"));
+		}
+	}
+	
+	private void copy(InputStream in, File file) {
+	    try {
+	        OutputStream out = new FileOutputStream(file);
+	        byte[] buf = new byte[1024];
+	        int len;
+	        while((len=in.read(buf))>0){
+	            out.write(buf,0,len);
+	        }
+	        out.close();
+	        in.close();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 	/*public boolean checkUpdates() {
