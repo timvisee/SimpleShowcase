@@ -102,7 +102,7 @@ public class CommandHandler {
 						String pli = getFlagArgument(args, "pli");
 						
 						// Check permissions
-						if(!pm.hasPermission((Player) sender, "simpleshowcase.command.shop.setpricelistitem")) {
+						if(!pm.hasPermission((Player) sender, "simpleshowcase.command.shop.linkpricelistitem")) {
 							sender.sendMessage(ChatColor.DARK_RED + "You don't have permission to use pricelist items!");
 							return true;
 						}
@@ -117,7 +117,6 @@ public class CommandHandler {
 								return true;
 							} else if(plugin.getPricelistManager().countItemsWithName(values.get(0)) == 1) {
 								applyPricelistItem = plugin.getPricelistManager().getItem(values.get(0));
-								return true;
 							} else {
 								int count = plugin.getPricelistManager().countItemsWithName(values.get(0));
 								sender.sendMessage(ChatColor.DARK_RED + values.get(0));
@@ -143,6 +142,12 @@ public class CommandHandler {
 							}
 							
 							applyPricelistItem = plugin.getPricelistManager().getItem(pricelistName, itemName);
+						}
+					}
+					if(isFlagSet(args, "sl")) {
+						// Check permissions
+						if(!pm.hasPermission((Player) sender, "simpleshowcase.command.shop.setlocation")) {
+							sender.sendMessage(ChatColor.DARK_RED + "You don't have permission to set the location!");
 							return true;
 						}
 					}
@@ -169,6 +174,14 @@ public class CommandHandler {
 						sender.sendMessage(ChatColor.GREEN + "The pricelist item of the shop has been set to:");
 						sender.sendMessage(ChatColor.YELLOW + applyPricelistItem.getPricelistName() + ChatColor.GRAY + " : " +
 								ChatColor.YELLOW + applyPricelistItem.getItemName());
+					}
+					
+					if(isFlagSet(args, "sl")) {
+						// Put the player in the shop selection mode and return a message
+						sender.sendMessage("");
+						plugin.getPlayerModeManager().setPlayerMode(p, PlayerModeType.SHOP_LOCATION_SELECTION, true);
+						sender.sendMessage(ChatColor.GREEN + "Left click a block to put the shop on");
+						sender.sendMessage(ChatColor.GREEN + "Right click in the air to get out of the selection mode");
 					}
 					
 					return true;
@@ -1106,7 +1119,7 @@ public class CommandHandler {
 					Player p = (Player) sender;
 					
 					// Check permissions
-					if(!pm.hasPermission((Player) sender, "simpleshowcase.command.shop.setpricelistitem")) {
+					if(!pm.hasPermission((Player) sender, "simpleshowcase.command.shop.linkpricelistitem")) {
 						sender.sendMessage(ChatColor.DARK_RED + "You don't have permission!");
 						return true;
 					}

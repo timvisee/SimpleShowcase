@@ -741,7 +741,7 @@ public class SimpleShowcasePlayerListener implements Listener {
 					} else {
 						
 						// Check permissions
-						if(!plugin.getPermissionsManager().hasPermission(p, "simpleshowcase.shop.playerowned.buy")) {
+						if(!plugin.getPermissionsManager().hasPermission(p, "simpleshowcase.shop.buy")) {
 							p.sendMessage("");
 							p.sendMessage(ChatColor.DARK_RED + "You don't have permission to use this shop!");
 							return;
@@ -933,7 +933,7 @@ public class SimpleShowcasePlayerListener implements Listener {
 					} else {
 						
 						// Check permissions
-						if(!plugin.getPermissionsManager().hasPermission(p, "simpleshowcase.shop.playerowned.buy")) {
+						if(!plugin.getPermissionsManager().hasPermission(p, "simpleshowcase.shop.buy")) {
 							p.sendMessage("");
 							p.sendMessage(ChatColor.DARK_RED + "You don't have permission to use this shop!");
 							plugin.getPlayerModeManager().resetPlayerMode(p, false);
@@ -1496,7 +1496,10 @@ public class SimpleShowcasePlayerListener implements Listener {
 			}
 			
 			// Add the items to the player inventory
-			addItemsToPlayerInventory(p, s.getProductItemTypeId(), s.getProductItemData(), itemCount);
+			if(!s.getOwnerType().equals(SSShopOwnerType.PLAYER))
+				addItemsToPlayerInventory(p, s.getProductItemTypeId(), s.getProductItemData(), itemCount);
+			else
+				addItemsToPlayerInventory(p, s.getStockTypeId(), s.getStockDataValue(), itemCount);
 			
 			// Charge the player
 			plugin.getEconomyManager().withdrawMoney(p.getName(), price);

@@ -56,6 +56,10 @@ public class SimpleShowcase extends JavaPlugin {
 	private Date enabledDate = new Date();
 	
 	File configFile = new File("plugins/SimpleShowcase/config.yml");
+
+	// Update Checker
+	boolean isUpdateAvailable = false;
+	String newestVersion = "1.0";
 	
 	public void onEnable() {
 		// Reset the enabled date, to calculate the 'running time'
@@ -125,6 +129,18 @@ public class SimpleShowcase extends JavaPlugin {
 		// Show disabled message
 		log.info("[SimpleShowcase] Simple Showcase Disabled");
 	}
+	
+	/*public boolean checkUpdates() {
+		SafeCreeperUpdateChecker scuc = new SafeCreeperUpdateChecker(this);
+		isUpdateAvailable = scuc.checkUpdates();
+		newestVersion = scuc.getLastVersion();
+		
+		if(isUpdateAvailable) {
+			log.info("[SafeCreeper] New version available, version " + newestVersion + ".");
+		}
+		
+		return isUpdateAvailable;
+	}*/
 	
 	/**
 	 * Setup the metrics statics feature
