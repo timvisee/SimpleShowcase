@@ -30,7 +30,7 @@ public class SimpleShowcase extends JavaPlugin {
 	static final Logger log = Logger.getLogger("Minecraft");
 	
 	// Additional version info
-	private int versionCode = 1;
+	private int versionCode = 2;
 
 	private final SimpleShowcaseBlockListener blockListener = new SimpleShowcaseBlockListener(this);
 	private final SimpleShowcaseEntityListener entityListener = new SimpleShowcaseEntityListener(this);
@@ -103,12 +103,18 @@ public class SimpleShowcase extends JavaPlugin {
 		pm.registerEvents(this.playerListener, this);
 		pm.registerEvents(this.worldListener, this);
 		
+		// Remove all duped show items
+		getShopManager().removeAllDupedShopShowItems();
+		
 		// Spawn all the shop items
 		getShopManager().respawnAllShopShowItems();
 		
 		// Create a timer for respawning the items every time in shops (if needed)
 		if(getConfig().getBoolean("shops.showItems.respawn.enabled", true)) {
-			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllShopShowItems(); } }, getConfig().getInt("shops.showItems.respawn.interval", 12000), getConfig().getInt("shops.showItems.respawn.interval", 12000));
+			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { 
+				getShopManager().removeAllShopShowItems();
+				getShopManager().respawnAllShopShowItems(); 
+			} }, getConfig().getInt("shops.showItems.respawn.interval", 4800), getConfig().getInt("shops.showItems.respawn.interval", 4800));
 		}
 		if(getConfig().getBoolean("shops.showItems.respawnIncorrect.enabled", true)) {
 			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllIncorrectShopShowItems(); } }, getConfig().getInt("shops.showItems.respawnIncorrect.interval", 100), getConfig().getInt("shops.showItems.respawnIncorrect.interval", 300));

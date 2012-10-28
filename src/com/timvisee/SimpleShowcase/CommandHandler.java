@@ -3479,6 +3479,8 @@ public class CommandHandler {
 				if(args.length == 1) {
 					sender.sendMessage(ChatColor.YELLOW + "[SimpleShowcase] Reloading data...");
 					long t = System.currentTimeMillis();
+					// Remove all shopw items first
+					plugin.getShopManager().removeAllShopShowItems();
 					plugin.loadAll();
 					long duration = System.currentTimeMillis() - t;
 					sender.sendMessage(ChatColor.YELLOW + "[SimpleShowcase] " + ChatColor.GREEN + "Data succesfuly loaded, took " + ChatColor.GOLD + String.valueOf(duration) + "ms" + ChatColor.GREEN + "!");

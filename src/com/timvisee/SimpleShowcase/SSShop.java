@@ -1349,6 +1349,9 @@ public class SSShop {
 		// Remove the show item if it has been spawned already
 		removeShowItem();
 		
+		// Remove all duped show items
+		removeDupedShowItems(s);
+		
 		// The item may not be spawned in a non-loaded chunk
 		if(!isShopChunkLoaded(s))
 			return null;
@@ -1381,13 +1384,15 @@ public class SSShop {
 		if(typeId == 0)
 			return null;
 		
-		// Calculate the item location and spawn it
+		// Calculate the item location and spawn the items
 		Location spawn = b.getLocation();
 		spawn.add(0.5, 0.6, 0.5);
-		Item i;
-		i = b.getWorld().dropItem(spawn, is);
+		
+		// Spawn the item
+		Item i = b.getWorld().dropItem(spawn, is);
+		i.setPickupDelay(1000000000);
 
-		// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it niceley on the block
+		// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it nicely on the block
 		i.setVelocity(new Vector(0, 0.1, 0));
 	
 		this.shopItem = i;
@@ -1544,38 +1549,39 @@ public class SSShop {
 		for(Entity e : entities) {
 			
 			// Check if the entity is in the same location as the shop block or just one above
-			if(b.equals(e.getLocation().getBlock()) || b2.equals(e.getLocation().getBlock())) {
+			if(!b.equals(e.getLocation().getBlock()) || !b2.equals(e.getLocation().getBlock())) {
 				
 				// The entity must be an instance of an Item
 				if(e instanceof Item) {
 					
 					// The entity must be a different item than a current spawned show item
 					if(isShowItemSpawned()) {
-						if(!this.shopItem.equals(e)) {
-							
-							// Try to cast the entity to an item
-							Item i;
-							ItemStack is;
-							try {
-								i = (Item) e;
-								is = i.getItemStack();
-							} catch(ClassCastException ex) {
-								// The entity couldn't be casted to an item, continue to the next item
-								continue;
-							} catch(NullPointerException ex) {
-								// The entity couldn't be casted to an item, continue to the next item
-								continue;
-							}
-							
-							// The item must have the same type id
-							if(is.getTypeId() == this.productItemTypeId) {
-								// The item is duped, remove the item
-								i.remove();
-								
-								// Add 1 to the duped items counter
-								dupedItems++;
-							}
+						if(this.shopItem.equals(e)) {
+							continue;
 						}
+					}
+					
+					// Try to cast the entity to an item
+					Item i;
+					ItemStack is;
+					try {
+						i = (Item) e;
+						is = i.getItemStack();
+					} catch(ClassCastException ex) {
+						// The entity couldn't be casted to an item, continue to the next item
+						continue;
+					} catch(NullPointerException ex) {
+						// The entity couldn't be casted to an item, continue to the next item
+						continue;
+					}
+					
+					// The item must have the same type id
+					if(is.getTypeId() == this.productItemTypeId) {
+						// The item is duped, remove the item
+						i.remove();
+						
+						// Add 1 to the duped items counter
+						dupedItems++;
 					}
 				}
 			}

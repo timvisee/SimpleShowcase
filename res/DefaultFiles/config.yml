@@ -1,0 +1,12 @@
+shops:
+    showItems:
+        respawn:
+            enabled: true
+            interval: 4800 # In server ticks, 20 = 1 seccond
+        respawnIncorrect:
+            enabled: true
+            interval: 100 # In server ticks, 20 = 1 seccond
+autoSave:
+    enabled: true
+    interval: 6000 # In server ticks, 20 = 1 seccond
+version: 1
