@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;

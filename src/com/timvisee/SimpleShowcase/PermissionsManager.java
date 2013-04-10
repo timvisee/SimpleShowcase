@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.util.ArrayList;
 import java.util.Arrays;

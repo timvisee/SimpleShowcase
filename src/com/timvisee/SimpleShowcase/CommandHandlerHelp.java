@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -72,7 +72,7 @@ public class CommandHandlerHelp {
 						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " shop enableinstantsell" + ChatColor.WHITE + " : Enable instant sell of a selected ...");
 						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " shop disableinstantsell" + ChatColor.WHITE + " : Disable instant sell of a...");
 						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " shop setinstantsellquantity <quantity>" + ChatColor.WHITE + " : Set instant sell ...");
-						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth create [name]" + ChatColor.WHITE + " : Create a booth");
+						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth create [name] [flags]" + ChatColor.WHITE + " : Create a booth");
 						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth select" + ChatColor.WHITE + " : Select a booth by clicking");
 						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth select <name>" + ChatColor.WHITE + " : Select a booth by name");
 						sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth selectid <id>" + ChatColor.WHITE + " : Selece a booth by id");
@@ -149,6 +149,7 @@ public class CommandHandlerHelp {
 								sender.sendMessage(ChatColor.GOLD + "name" + ChatColor.WHITE + " : The shop name");
 								sender.sendMessage(" ");
 								sender.sendMessage(ChatColor.GREEN + "Flags:");
+								sender.sendMessage(ChatColor.GOLD + "-sl" + ChatColor.WHITE + " : Set the location by clicking after creation");
 								sender.sendMessage(ChatColor.GOLD + "-pli <pricelistitem>" + ChatColor.WHITE + " : Instantly link a pricelist item");
 								return true;
 								
@@ -524,7 +525,7 @@ public class CommandHandlerHelp {
 								// View the help
 								sender.sendMessage(" ");
 								sender.sendMessage(ChatColor.GREEN + "==========[ SIMPLE SHOWCASE HELP ]==========");
-								sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth create [name]" + ChatColor.WHITE + " : Create a booth");
+								sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth create [name] [flags]" + ChatColor.WHITE + " : Create a booth");
 								sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth select" + ChatColor.WHITE + " : Select a booth by clicking");
 								sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth select <name>" + ChatColor.WHITE + " : Select a booth by name");
 								sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth selectid <id>" + ChatColor.WHITE + " : Selece a booth by id");
@@ -545,6 +546,9 @@ public class CommandHandlerHelp {
 								sender.sendMessage(ChatColor.GOLD + "/" + commandLabel + " booth create [name]" + ChatColor.WHITE + " : Create a new booth");
 								sender.sendMessage(" ");
 								sender.sendMessage(ChatColor.GOLD + "name" + ChatColor.WHITE + " : The booth name");
+								sender.sendMessage(" ");
+								sender.sendMessage(ChatColor.GREEN + "Flags:");
+								sender.sendMessage(ChatColor.GOLD + "-sl" + ChatColor.WHITE + " : Set the location by clicking after creation");
 								return true;
 								
 							} else if(args[2].equalsIgnoreCase("select") || args[2].equalsIgnoreCase("sel") || args[2].equalsIgnoreCase("s")) {

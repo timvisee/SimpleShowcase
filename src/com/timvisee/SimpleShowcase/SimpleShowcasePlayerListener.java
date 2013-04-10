@@ -1,9 +1,12 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -1483,8 +1486,15 @@ public class SimpleShowcasePlayerListener implements Listener {
 				return;
 			}
 			
+			
 			// Check if the player has enough space
-			int spaceLeft = getPlayerInventoryItemSpace(p, s.getProductItemTypeId(), s.getProductItemData());
+			int spaceLeft = 0;
+			if(s.getOwnerType().equals(SSShopOwnerType.PLAYER)) {
+				spaceLeft = getPlayerInventoryItemSpace(p, s.getStockTypeId(), s.getStockDataValue());
+			} else {
+				spaceLeft = getPlayerInventoryItemSpace(p, s.getProductItemTypeId(), s.getProductItemData());
+			}
+			
 			if(quantity > spaceLeft) {
 				p.sendMessage("");
 				if(spaceLeft == 0)
@@ -1612,11 +1622,18 @@ public class SimpleShowcasePlayerListener implements Listener {
 			
 			// Check if the entered value is valid
 			String quantityArg = e.getMessage();
-			if(!isInt(quantityArg)) {
-				p.sendMessage("");
-				p.sendMessage(ChatColor.DARK_RED + quantityArg);
-				p.sendMessage(ChatColor.DARK_RED + "Please enter a valid quantity!");
-				return;
+			
+			// If the quantityArg is not 'all' or 'a' it has to be a number
+			if(!quantityArg.trim().equalsIgnoreCase("a") && !quantityArg.trim().equalsIgnoreCase("all")) {
+				if(!isInt(quantityArg)) {
+					p.sendMessage("");
+					p.sendMessage(ChatColor.DARK_RED + quantityArg);
+					p.sendMessage(ChatColor.DARK_RED + "Please enter a valid quantity!");
+					return;
+				}
+			} else {
+				// If the player filled in the character 'a' or 'all', let him sell all his items
+				quantityArg = String.valueOf(getPlayerInventoryItemCount(p, s.getProductItemTypeId(), s.getProductItemData()));
 			}
 			
 			int quantity = Integer.parseInt(quantityArg);
@@ -1831,8 +1848,8 @@ public class SimpleShowcasePlayerListener implements Listener {
 	 * @return the maximum stack size
 	 */
 	public int getItemMaxStackSize(int itemTypeId) {
-		ItemStack is = new ItemStack(itemTypeId, 1);
-		return is.getMaxStackSize();
+		//ItemStack is = new ItemStack(itemTypeId, 1);
+		return Material.getMaterial(itemTypeId).getMaxStackSize();
 	}
 	
 	/**
@@ -1845,10 +1862,12 @@ public class SimpleShowcasePlayerListener implements Listener {
 	public int getPlayerInventoryItemSpace(Player player, int itemTypeId, byte itemData) {
 		Inventory inv = player.getInventory();
 		
+		List<ItemStack> contents = Arrays.asList(inv.getContents());
+		
 		int freeSpace = 0;
 		
 		for(int i = 0; i < inv.getSize(); i++) {
-			ItemStack stack = inv.getItem(i);
+			ItemStack stack = contents.get(i);
 			
 			// The Item Stack may not be null
 			if(stack == null) {
@@ -1857,7 +1876,8 @@ public class SimpleShowcasePlayerListener implements Listener {
 			}
 			
 			// If the stack contains zero items, continue
-			if(stack.getAmount() == 0) {
+			if(stack.getAmount() == 0 ||
+					stack.getType().equals(Material.AIR)) {
 				// There is place for a full stack of the item
 				freeSpace += getItemMaxStackSize(itemTypeId);
 				continue;
@@ -1888,7 +1908,7 @@ public class SimpleShowcasePlayerListener implements Listener {
 		int tot = 0;
 		for(int i = 0; i<inv.getSize(); i++){
 			ItemStack stack = inv.getItem(i);
-			if((stack!=null) && (stack.getTypeId() == itemTypeId)&& (stack.getData().getData() == itemData)) {
+			if((stack != null) && (stack.getTypeId() == itemTypeId) && (stack.getData().getData() == itemData)) {
 				tot+=stack.getAmount();
 			}
 		}

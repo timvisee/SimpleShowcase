@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

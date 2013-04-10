@@ -1,0 +1,22 @@
+name: SimpleShowcase
+main: com.timvisee.simpleshowcase.SimpleShowcase
+version: 0.1.4
+author: timvisee
+website: http://timvisee.com/
+softdepend: [Vault] #hack to fix trove errors
+commands:
+  simpleshowcase:
+    description: Simple Showcase commands
+    usage: /simpleshowcase
+  ss:
+    description: Simple Showcase commands
+    usage: /ss
+  shop:
+    description: Simple Showcase commands
+    usage: /shop
+  shops:
+    description: Simple Showcase player owned shop commands
+    usage: /shops
+  s:
+    description: Simple Showcase player owned shop commands
+    usage: /s

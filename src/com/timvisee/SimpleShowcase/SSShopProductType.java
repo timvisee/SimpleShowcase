@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 public enum SSShopProductType {
 	UNKNOWN("UNKNOWN"),

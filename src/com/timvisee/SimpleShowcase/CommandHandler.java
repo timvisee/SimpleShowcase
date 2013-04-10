@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1290,11 +1290,11 @@ public class CommandHandler {
 							int typeId = Integer.parseInt(itemId);
 							byte data = (byte) Integer.parseInt(itemData);
 							
-							if(typeId == 0) {
+							/*if(typeId == 0) {
 								sender.sendMessage(ChatColor.DARK_RED + itemId);
 								sender.sendMessage(ChatColor.DARK_RED + "You can't use air as show item!");
 								return true;
-							} else if(typeId < 0) {
+							} else */if(typeId < 0) {
 								sender.sendMessage(ChatColor.DARK_RED + itemId + ChatColor.GRAY + " : " + itemData);
 								sender.sendMessage(ChatColor.DARK_RED + "Invalid item id!");
 								return true;
@@ -1330,11 +1330,11 @@ public class CommandHandler {
 							
 							int typeId = Integer.parseInt(itemArg);
 							
-							if(typeId == 0) {
+							/*if(typeId == 0) {
 								sender.sendMessage(ChatColor.DARK_RED + String.valueOf(typeId));
 								sender.sendMessage(ChatColor.DARK_RED + "You can't use air as show item!");
 								return true;
-							} else if(typeId < 0) {
+							} else */if(typeId < 0) {
 								sender.sendMessage(ChatColor.DARK_RED + String.valueOf(typeId));
 								sender.sendMessage(ChatColor.DARK_RED + "Invalid item id!");
 								return true;
@@ -2813,6 +2813,10 @@ public class CommandHandler {
 					sender.sendMessage(ChatColor.DARK_RED + "This feature will be available in an upcomming version!");
 					return true;
 					
+				} else {
+					sender.sendMessage(ChatColor.DARK_RED + "Unknown command!");
+					sender.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GOLD + "/" + commandLabel + " help " + args[0] + ChatColor.YELLOW + "to view help");
+					return true;
 				}
 				
 			} else if(args[0].equalsIgnoreCase("booth") || args[0].equalsIgnoreCase("booths") || args[0].equalsIgnoreCase("b")) {
@@ -2877,7 +2881,16 @@ public class CommandHandler {
 						bname = plugin.getBoothManager().getUniqueName();
 					}
 					
-					// Create/define a new shop
+					// Check if the player has permission to use the 'sl' flag
+					if(isFlagSet(args, "sl")) {
+						// Check permissions
+						if(!pm.hasPermission((Player) sender, "simpleshowcase.command.booth.setlocation")) {
+							sender.sendMessage(ChatColor.DARK_RED + "You don't have permission to set the location!");
+							return true;
+						}
+					}
+					
+					// Create a new shop and set it's name
 					SSBooth b = bm.createBooth();
 					b.setName(bname);
 					
@@ -2885,6 +2898,15 @@ public class CommandHandler {
 					plugin.getBoothManager().selectBooth(p.getName(), b);
 
 					sender.sendMessage(ChatColor.GREEN + "The booth " + ChatColor.GOLD + b.getName() + ChatColor.GREEN + " has been created, and is now selected!");
+					
+					// Check if the 'setlocation' flag is set
+					if(isFlagSet(args, "sl")) {
+						// Put the player in the shop selection mode and return a message
+						sender.sendMessage("");
+						plugin.getPlayerModeManager().setPlayerMode(p, PlayerModeType.BOOTH_LOCATION_SELECTION, true);
+						sender.sendMessage(ChatColor.GREEN + "Left click a block to move the booth");
+						sender.sendMessage(ChatColor.GREEN + "Right click in the air to get out of the selection mode");
+					}
 					
 					return true;
 					
@@ -3429,6 +3451,10 @@ public class CommandHandler {
 							ChatColor.GOLD + plugin.getEconomyManager().toMoneyNotationProper(price, true));
 					return true;
 					
+				} else {
+					sender.sendMessage(ChatColor.DARK_RED + "Unknown command!");
+					sender.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GOLD + "/" + commandLabel + " help " + args[0] + ChatColor.YELLOW + "to view help");
+					return true;
 				}
 				
 			} else if(args[0].equalsIgnoreCase("save")) {
@@ -3592,7 +3618,7 @@ public class CommandHandler {
 
 				PluginDescriptionFile pdfFile = plugin.getDescription();
 				sender.sendMessage(ChatColor.YELLOW + "This server is running Simple Showcase v" + pdfFile.getVersion());
-				sender.sendMessage(ChatColor.YELLOW + "Simple Showcase is made my Tim Visee - timvisee.com");
+				sender.sendMessage(ChatColor.YELLOW + "Simple Showcase is made by Tim Visee - timvisee.com");
 				return true;
 			} else if(args[0].equalsIgnoreCase("help") || args[0].equalsIgnoreCase("h") || args[0].equalsIgnoreCase("?")) {
 				
@@ -3600,6 +3626,10 @@ public class CommandHandler {
 				CommandHandlerHelp chh = new CommandHandlerHelp(plugin);
 				return chh.onCommand(sender, cmd, commandLabel, args);
 				
+			} else {
+				sender.sendMessage(ChatColor.DARK_RED + "Unknown command!");
+				sender.sendMessage(ChatColor.YELLOW + "Use " + ChatColor.GOLD + "/" + commandLabel + " help " + ChatColor.YELLOW + "to view help");
+				return true;
 			}
 			
 		} else if(commandLabel.equalsIgnoreCase("shop") || commandLabel.equalsIgnoreCase("shops") || commandLabel.equalsIgnoreCase("s")) {

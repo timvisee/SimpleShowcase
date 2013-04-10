@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -657,8 +657,8 @@ public class SSShopManager {
 		// For each shop
 		for(SSShop s : this.shops) {
 			// Respawn the show item if it's in the wrong location
-			if(!s.isShowItemInValidLocation(plugin.getServer()))
-				if(s.shouldShowItemBeSpawned(plugin.getServer()))
+			if(s.shouldShowItemBeSpawned(plugin.getServer()))
+				if(!s.isShowItemInValidLocation(plugin.getServer()))
 					s.respawnShowItem(plugin.getServer());
 		}
 	}

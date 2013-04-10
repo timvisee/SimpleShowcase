@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,15 +22,15 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.timvisee.SimpleShowcase.Metrics;
-import com.timvisee.SimpleShowcase.Metrics.Graph;
+import com.timvisee.simpleshowcase.Metrics;
+import com.timvisee.simpleshowcase.Metrics.Graph;
 
 public class SimpleShowcase extends JavaPlugin {
 	
 	static final Logger log = Logger.getLogger("Minecraft");
 	
 	// Additional version info
-	private int versionCode = 2;
+	private int versionCode = 4;
 
 	private final SimpleShowcaseBlockListener blockListener = new SimpleShowcaseBlockListener(this);
 	private final SimpleShowcaseEntityListener entityListener = new SimpleShowcaseEntityListener(this);
@@ -111,16 +111,16 @@ public class SimpleShowcase extends JavaPlugin {
 		
 		// Create a timer for respawning the items every time in shops (if needed)
 		if(getConfig().getBoolean("shops.showItems.respawn.enabled", true)) {
-			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { 
+			getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() { public void run() { 
 				getShopManager().removeAllShopShowItems();
 				getShopManager().respawnAllShopShowItems(); 
 			} }, getConfig().getInt("shops.showItems.respawn.interval", 4800), getConfig().getInt("shops.showItems.respawn.interval", 4800));
 		}
 		if(getConfig().getBoolean("shops.showItems.respawnIncorrect.enabled", true)) {
-			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllIncorrectShopShowItems(); } }, getConfig().getInt("shops.showItems.respawnIncorrect.interval", 100), getConfig().getInt("shops.showItems.respawnIncorrect.interval", 300));
+			getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() { public void run() { getShopManager().respawnAllIncorrectShopShowItems(); } }, getConfig().getInt("shops.showItems.respawnIncorrect.interval", 100), getConfig().getInt("shops.showItems.respawnIncorrect.interval", 300));
 		}
 		if(getConfig().getBoolean("autoSave.enabled", true)) {
-			getServer().getScheduler().scheduleAsyncRepeatingTask( this, new Runnable() { public void run() { saveAll(); } }, getConfig().getInt("autoSave.interval", 6000), getConfig().getInt("autoSave.interval", 6000));
+			getServer().getScheduler().scheduleSyncRepeatingTask( this, new Runnable() { public void run() { saveAll(); } }, getConfig().getInt("autoSave.interval", 6000), getConfig().getInt("autoSave.interval", 6000));
 		}
 		
 		// Setup Metrics
@@ -220,12 +220,12 @@ public class SimpleShowcase extends JavaPlugin {
 	            	return getBoothManager().countBooths();
 	            }
 		    });
-		    graph.addPlotter(new Metrics.Plotter("Pricelist Items") {
+		    /*graph.addPlotter(new Metrics.Plotter("Pricelist Items") {
 	            @Override
 	            public int getValue() {
 	            	return getPricelistManager().countPricelistItems();
 	            }
-		    });
+		    });*/
 		    
 		    // Used permissions systems
 		    Graph graph2 = metrics.createGraph("Permisison Plugin Usage");
@@ -434,7 +434,6 @@ public class SimpleShowcase extends JavaPlugin {
 	    	getPricelistManager().reloadList();
 			getPricelistManager().applyItemsToShops();
 	    }
-			
 	}
 	
 	/**

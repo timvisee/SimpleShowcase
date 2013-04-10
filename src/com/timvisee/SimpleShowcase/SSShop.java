@@ -1,4 +1,4 @@
-package com.timvisee.SimpleShowcase;
+package com.timvisee.simpleshowcase;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -761,19 +761,13 @@ public class SSShop {
 	 */
 	public void setProductItemTypeId(int typeId, Server s) {
 		this.productItemTypeId = typeId;
+
+		// Remove and respawn the show item to make sure it's updated
+		if(isShowItemSpawned())
+			removeShowItem();
 		
-		// Change the show item if it isn't set yet
-		if(showItem()) {
-			if(this.showItemTypeId == 0) {
-				this.showItemTypeId = typeId;
-				
-				if(isShowItemSpawned())
-					removeShowItem();
-				
-				if(shouldShowItemBeSpawned(s))
-					spawnShowItem(s);
-			}
-		}
+		if(shouldShowItemBeSpawned(s))
+			spawnShowItem(s);
 	}
 	
 	/**
@@ -815,18 +809,12 @@ public class SSShop {
 	public void setProductItemData(byte itemData, Server s) {
 		this.productItemData = itemData;
 		
-		// Change the show item if it isn't set yet
-		if(showItem()) {
-			if(this.showItemData == 0) {
-				this.showItemData = itemData;
-				
-				if(isShowItemSpawned())
-					removeShowItem();
-				
-				if(shouldShowItemBeSpawned(s))
-					spawnShowItem(s);
-			}
-		}
+		// Remove and respawn the show item to make sure it's updated		
+		if(isShowItemSpawned())
+			removeShowItem();
+		
+		if(shouldShowItemBeSpawned(s))
+			spawnShowItem(s);
 	}
 	
 	public boolean usesPricelist() {
@@ -883,9 +871,15 @@ public class SSShop {
 	 * @return item type id
 	 */
 	public int getShowItemTypeId() {
+		// If the owner of the shop is a player, return the stock contents as show item
 		if(this.ownerType.equals(SSShopOwnerType.PLAYER))
 			if(this.stockTypeId != 0 && this.stockQuantity != 0)
 				return this.stockTypeId;
+		
+		// If the show item isn't set yet, use the product as show item
+		if(this.showItemTypeId == 0)
+			return this.productItemTypeId;
+		
 		return this.showItemTypeId;
 	}
 	
@@ -906,10 +900,16 @@ public class SSShop {
 	 * @return item data value
 	 */
 	public byte getShowItemData() {
+		// If the owner of the shop is a player, return the stock contents as show item
 		if(this.ownerType.equals(SSShopOwnerType.PLAYER)) {
 			if(this.stockTypeId != 0 && this.stockQuantity != 0)
 				return this.stockDataValue;
 		}
+
+		// If the show item isn't set yet, use the product as show item
+		if(this.showItemTypeId == 0)
+			return this.productItemData;
+		
 		return this.showItemData;
 	}
 	
@@ -1386,16 +1386,55 @@ public class SSShop {
 		
 		// Calculate the item location and spawn the items
 		Location spawn = b.getLocation();
-		spawn.add(0.5, 0.6, 0.5);
-		
-		// Spawn the item
-		Item i = b.getWorld().dropItem(spawn, is);
-		i.setPickupDelay(1000000000);
-
-		// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it nicely on the block
-		i.setVelocity(new Vector(0, 0.1, 0));
+		Item i;
+		if(b2.getTypeId() == 0) {
+			/*spawn.add(0.5, 0.6, 0.5);
+			
+			// Spawn the item
+			i = b.getWorld().dropItem(spawn, is);
+			i.setPickupDelay(1000000000);
 	
-		this.shopItem = i;
+			// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it nicely on the block
+			i.setVelocity(new Vector(0, 0.1, 0));
+		
+			this.shopItem = i;*/
+			
+			spawn.add(0.5, 1.15, 0.5);
+			
+			// Spawn the item
+			i = b.getWorld().dropItem(spawn, is);
+			i.setPickupDelay(1000000000);
+	
+			// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it nicely on the block
+			i.setVelocity(new Vector(0, -.05, 0));
+		
+			this.shopItem = i;
+			
+		} else {
+			
+			/*spawn.add(0.5, 1.05, 0.5);
+			
+			// Spawn the item
+			i = b.getWorld().dropItem(spawn, is);
+			i.setPickupDelay(1000000000);
+	
+			// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it nicely on the block
+			i.setVelocity(new Vector(0, -0.15, 0));
+		
+			this.shopItem = i;*/
+			
+			spawn.add(0.5, 1.15, 0.5);
+			
+			// Spawn the item
+			i = b.getWorld().dropItem(spawn, is);
+			i.setPickupDelay(1000000000);
+	
+			// Force the item to move up, to prevent it from glitching out of the block on the wrong side, to get it nicely on the block
+			i.setVelocity(new Vector(0, -.05, 0));
+		
+			this.shopItem = i;
+			
+		}
 		
 		return i;
 	}
@@ -1549,19 +1588,11 @@ public class SSShop {
 		for(Entity e : entities) {
 			
 			// Check if the entity is in the same location as the shop block or just one above
-			if(!b.equals(e.getLocation().getBlock()) || !b2.equals(e.getLocation().getBlock())) {
+			if(b.equals(e.getLocation().getBlock()) || b2.equals(e.getLocation().getBlock())) {
 				
 				// The entity must be an instance of an Item
 				if(e instanceof Item) {
 					
-					// The entity must be a different item than a current spawned show item
-					if(isShowItemSpawned()) {
-						if(this.shopItem.equals(e)) {
-							continue;
-						}
-					}
-					
-					// Try to cast the entity to an item
 					Item i;
 					ItemStack is;
 					try {
@@ -1575,8 +1606,16 @@ public class SSShop {
 						continue;
 					}
 					
-					// The item must have the same type id
-					if(is.getTypeId() == this.productItemTypeId) {
+					// While respawning the items with the task, the items will still be destroyed if the plguin won't check their type id
+					
+					// The item must have the same type id and datavalue
+					if(is.getTypeId() == this.productItemTypeId && is.getData().getData() == this.productItemData) {
+						
+						// If the show item is spawned, the item must be different
+						if(isShowItemSpawned())
+							if(this.shopItem.equals(e))
+								continue;
+						
 						// The item is duped, remove the item
 						i.remove();
 						
